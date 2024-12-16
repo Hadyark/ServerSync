@@ -61,20 +61,12 @@ shadowJar {
     archiveClassifier.set('gui') // Output JAR will be named <project>-<version>-server.jar
 
     //Don't minimize with JavaFX
-    //minimize()
+    minimize() //Comment to build GUI
 
     dependencies {
         exclude 'forge*.jar'
+        exclude '**/*javafx*/**' //Comment to build GUI
 
-        /*
-        // Exclude JavaFX libs
-        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:win"))
-        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:linux"))
-        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:mac"))
-
-        // But cause an error, because the GUI is called in the server side
-        exclude 'com/superzanti/serversync/GUIJavaFX/**'
-        */
     }
 }
 
