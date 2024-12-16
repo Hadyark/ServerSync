@@ -4,6 +4,7 @@ plugins {
     id 'edu.sc.seis.launch4j' version '2.5.4'
     id 'java'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
@@ -32,16 +33,49 @@ dependencies {
     annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
     implementation fileTree(dir: 'libs', include: '*.jar')
 
-    //Dependencies (GUI)
-    runtimeOnly "org.openjfx:javafx-controls:$javafx.version:win"
-    runtimeOnly "org.openjfx:javafx-controls:$javafx.version:linux"
-    runtimeOnly "org.openjfx:javafx-controls:$javafx.version:mac"
+    //Dependencies (GUI
+    implementation "org.openjfx:javafx-controls:$javafx.version:win"
+    implementation "org.openjfx:javafx-controls:$javafx.version:linux"
+    implementation "org.openjfx:javafx-controls:$javafx.version:mac"
 
     // Use JUnit Jupiter API for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2', 'org.junit.jupiter:junit-jupiter-params:5.8.2'
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2', 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
 
+}
+
+jar {
+    processResources {
+        exclude "css/application.css"
+    }
+
+    manifest {
+        attributes 'Main-Class': ss_main_class, 'Implementation-Version': ss_version
+    }
+}
+
+// Configure the shadowJar task
+shadowJar {
+    inputs.file(jar.archiveFile)
+    archiveClassifier.set('gui') // Output JAR will be named <project>-<version>-server.jar
+
+    //Don't minimize with JavaFX
+    //minimize()
+
+    dependencies {
+        exclude 'forge*.jar'
+
+        /*
+        // Exclude JavaFX libs
+        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:win"))
+        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:linux"))
+        exclude(dependency("org.openjfx:javafx-controls:$javafx.version:mac"))
+
+        // But cause an error, because the GUI is called in the server side
+        exclude 'com/superzanti/serversync/GUIJavaFX/**'
+        */
+    }
 }
 
 application {
@@ -55,48 +89,8 @@ test {
     }
 }
 
-// Create the full JAR with server-side and JavaFX
-task guiJar(type: Jar) {
-    archiveClassifier.set('gui') // Output JAR will be named <project>-<version>-GUI.jar
-
-    manifest {
-        attributes 'Main-Class': ss_main_class, 'Implementation-Version': ss_version
-    }
-
-    exclude "css/application.css"
-
-    from sourceSets.main.output
-
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-
-// Create the server-only JAR
-task serverJar(type: Jar) {
-    archiveClassifier.set('server') // Output JAR will be named <project>-<version>-server.jar
-
-    manifest {
-        attributes 'Main-Class': ss_main_class_server, 'Implementation-Version': ss_version
-    }
-
-    exclude "css/application.css"
-
-    from sourceSets.main.output
-
-    // Optional: Include server-only dependencies
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-            .findAll { !it.toString().contains('javafx')} // Exclude JavaFX libraries
-    }
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-
-/* TODO fix
 createExe {
-    jarTask = serverJar
+    jarTask = shadowJar
     mainClassName = ss_main_class
     outfile = 'ServerSyncClient.exe'
     icon = "${projectDir}/src/main/resources/ServersyncLogo.ico"
@@ -108,7 +102,7 @@ createExe {
 }
 
 task createServerExe(type: Launch4jLibraryTask) {
-    jarTask = serverJar
+    jarTask = shadowJar
     mainClassName = ss_main_class_server
     outfile = 'ServerSyncServer.exe'
     headerType = 'console'
@@ -119,9 +113,8 @@ task createServerExe(type: Launch4jLibraryTask) {
     fileDescription = "The server side for admins."
     version = ss_version
 }
-*/
 
-/* TODO What is ?
+/*
 publishing {
     repositories {
         maven {
@@ -151,6 +144,3 @@ tasks.register('cleanProject') {
         }
     }
 }
-
-build.dependsOn guiJar, serverJar
-jar.enabled = false
