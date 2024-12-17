@@ -26,14 +26,24 @@ javafx {
     modules = [ 'javafx.controls' ]
 }
 
+configurations {
+    serverShadowJar
+}
+
 dependencies {
+
+    //serverShadowJar
+    serverShadowJar 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
+    serverShadowJar 'info.picocli:picocli:4.7.5'
+    serverShadowJar fileTree(dir: 'libs', include: '*.jar')
+
     //Dependencies (Server + GUI)
     implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
     implementation 'info.picocli:picocli:4.7.5'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
     implementation fileTree(dir: 'libs', include: '*.jar')
 
-    //Dependencies (GUI
+    //Dependencies (GUI)
     implementation "org.openjfx:javafx-controls:$javafx.version:win"
     implementation "org.openjfx:javafx-controls:$javafx.version:linux"
     implementation "org.openjfx:javafx-controls:$javafx.version:mac"
@@ -55,18 +65,40 @@ jar {
     }
 }
 
-// Configure the shadowJar task
+// Configure the shadowJar task (with JavaFX)
 shadowJar {
     inputs.file(jar.archiveFile)
-    archiveClassifier.set('gui') // Output JAR will be named <project>-<version>-server.jar
+    archiveClassifier.set('gui')
 
     //Don't minimize with JavaFX
-    minimize() //Comment to build GUI
+    //minimize() //Comment to build GUI
 
     dependencies {
         exclude 'forge*.jar'
-        exclude '**/*javafx*/**' //Comment to build GUI
+        //exclude '**/*javafx*/**' //Comment to build GUI
 
+    }
+}
+
+// Server JAR (without JavaFX)
+task serverShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    archiveClassifier.set('server')
+    configurations = [project.configurations.serverShadowJar]
+
+    // Include all main source sets
+    from sourceSets.main.output
+    minimize()
+
+    manifest {
+        attributes 'Main-Class': ss_main_class_server
+        attributes 'Implementation-Version': ss_version
+        // Force to start in server mode
+        attributes 'JVM-Arguments': '-server'
+    }
+
+    dependencies {
+        exclude 'forge*.jar'
+        exclude '**/*javafx*/**'
     }
 }
 
@@ -136,3 +168,6 @@ tasks.register('cleanProject') {
         }
     }
 }
+
+
+build.dependsOn serverShadowJar
