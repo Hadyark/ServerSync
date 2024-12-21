@@ -27,7 +27,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
 }
 
-jar {
+
+jar.enabled = false
+
+// Configure the shadowJar task (with JavaFX)
+shadowJar {
     processResources {
         exclude "css/application.css"
     }
@@ -36,11 +40,7 @@ jar {
         attributes 'Main-Class': 'com.superzanti.serversync.ServerSyncServer'
         attributes 'Implementation-Version': '4.3.0'
     }
-}
 
-// Configure the shadowJar task (with JavaFX)
-shadowJar {
-    inputs.file(jar.archiveFile)
     archiveClassifier.set('server')
 
     minimize()

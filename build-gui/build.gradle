@@ -39,20 +39,19 @@ javafx {
     modules = [ 'javafx.controls' ]
 }
 
-jar {
-    processResources {
-        exclude "css/application.css"
-    }
-
-}
+jar.enabled = false
 
 // Configure the shadowJar task (with JavaFX)
 shadowJar {
-    inputs.file(jar.archiveFile)
+
     archiveClassifier.set('gui')
 
     //Don't minimize with JavaFX
     //minimize() //Comment to build GUI
+
+    processResources {
+        exclude "css/application.css"
+    }
 
     dependencies {
         exclude 'forge*.jar'
