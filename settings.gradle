@@ -8,3 +8,6 @@
  */
 
 rootProject.name = 'ServerSync'
+include 'build-shared'
+include 'build-server'
+include 'build-gui'
