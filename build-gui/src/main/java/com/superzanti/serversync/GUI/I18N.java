@@ -1,4 +1,4 @@
-package com.superzanti.serversync.GUIJavaFX;
+package com.superzanti.serversync.GUI;
 
 import com.superzanti.serversync.ServerSync;
 import com.superzanti.serversync.client.ActionEntry;
@@ -14,8 +14,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 
 import java.io.UnsupportedEncodingException;
-import java.net.ServerSocket;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
