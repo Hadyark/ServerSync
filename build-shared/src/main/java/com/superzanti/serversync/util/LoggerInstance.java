@@ -1,6 +1,6 @@
 package com.superzanti.serversync.util;
 
-import com.superzanti.serversync.ServerSync;
+import com.superzanti.serversync.ServerSyncWrapper;
 import com.superzanti.serversync.files.PathBuilder;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class LoggerInstance {
     public LoggerInstance(String context) {
         setupOnelinerLogFormat();
         this.ctx = context;
-        javaLogger = java.util.logging.Logger.getLogger(ServerSync.APPLICATION_TITLE + "-" + context);
+        javaLogger = java.util.logging.Logger.getLogger(ServerSyncWrapper.APPLICATION_TITLE + "-" + context);
         javaLogger.setLevel(Level.FINE);
 
         try {

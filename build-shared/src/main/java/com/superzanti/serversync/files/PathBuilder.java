@@ -1,6 +1,6 @@
 package com.superzanti.serversync.files;
 
-import com.superzanti.serversync.ServerSync;
+import com.superzanti.serversync.ServerSyncWrapper;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -10,7 +10,7 @@ public class PathBuilder {
     private final StringBuilder builder = new StringBuilder();
 
     public PathBuilder() {
-        add(ServerSync.rootDir.toString());
+        add(ServerSyncWrapper.rootDir.toString());
     }
 
     /**

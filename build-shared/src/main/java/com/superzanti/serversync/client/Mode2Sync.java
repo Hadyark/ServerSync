@@ -1,7 +1,7 @@
 package com.superzanti.serversync.client;
 
 import com.superzanti.serversync.RefStrings;
-import com.superzanti.serversync.ServerSync;
+import com.superzanti.serversync.ServerSyncWrapper;
 import com.superzanti.serversync.config.IgnoredFilesMatcher;
 import com.superzanti.serversync.config.SyncConfig;
 import com.superzanti.serversync.files.*;
@@ -49,7 +49,7 @@ public class Mode2Sync implements Runnable {
     public List<ActionEntry> generateActionList(FileManifest manifest) throws IOException {
         List<ActionEntry> actions = manifest.files.stream().map(entry -> {
             Path file = entry.resolvePath();
-            Path relativeFile = ServerSync.rootDir.relativize(file);
+            Path relativeFile = ServerSyncWrapper.rootDir.relativize(file);
 
             if (entry.isOptional && SyncConfig.getConfig().REFUSE_CLIENT_MODS) {
                 return new ActionEntry(entry, EActionType.Ignore, "ui/reason_refuse_client_mods_enabled");
@@ -73,7 +73,7 @@ public class Mode2Sync implements Runnable {
         List<Path> files = manifest.files.stream().map(FileEntry::resolvePath).collect(Collectors.toList());
         for (DirectoryEntry dir : manifest.directories) {
             if (dir.mode == EDirectoryMode.mirror) {
-                Path dirPath = ServerSync.rootDir.resolve(dir.getLocalPath());
+                Path dirPath = ServerSyncWrapper.rootDir.resolve(dir.getLocalPath());
                 if (Files.notExists(dirPath)) {
                     // Can happen if a directory is configured to be managed but all of its files are ignored
                     continue;
@@ -81,7 +81,7 @@ public class Mode2Sync implements Runnable {
                 List<ActionEntry> dirActions = Files
                     .walk(dirPath)
                     .filter(f -> !Files.isDirectory(f) && !files.contains(f))
-                    .map(f -> new FileEntry(ServerSync.rootDir.relativize(f).toString(), null, ""))
+                    .map(f -> new FileEntry(ServerSyncWrapper.rootDir.relativize(f).toString(), null, ""))
                     .map(entry -> {
                         if (IgnoredFilesMatcher.matches(Paths.get(entry.path))) {
                             return new ActionEntry(

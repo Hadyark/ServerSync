@@ -1,6 +1,6 @@
 package com.superzanti.serversync.files;
 
-import com.superzanti.serversync.ServerSync;
+import com.superzanti.serversync.ServerSyncWrapper;
 import com.superzanti.serversync.config.IgnoredFilesMatcher;
 import com.superzanti.serversync.util.Logger;
 import com.superzanti.serversync.util.PrettyCollection;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileManager {
-    public static final Path clientOnlyFilesDirectory = ServerSync.rootDir.resolve("clientmods");
-    public static final Path logsDirectory = ServerSync.rootDir.resolve("logs");
+    public static final Path clientOnlyFilesDirectory = ServerSyncWrapper.rootDir.resolve("clientmods");
+    public static final Path logsDirectory = ServerSyncWrapper.rootDir.resolve("logs");
 
     private FileManager() {
     }
@@ -39,7 +39,7 @@ public class FileManager {
         // Check for invalid directory configuration
         List<Path> dirs = new ArrayList<>();
         for (String includedDirectory : includedDirectories) {
-            Path dir = ServerSync.rootDir.resolve(Paths.get(includedDirectory));
+            Path dir = ServerSyncWrapper.rootDir.resolve(Paths.get(includedDirectory));
             if (!Files.exists(dir)) {
                 Logger.debug(String.format("Configured directory: %s does not exist.", dir));
                 throw new IOException("File does not exist");
@@ -65,7 +65,7 @@ public class FileManager {
                 }
                 return Stream.empty();
             })
-            .map(ServerSync.rootDir::relativize)
+            .map(ServerSyncWrapper.rootDir::relativize)
             .collect(Collectors.toList());
         Logger.debug(String.format("All files: %s", PrettyCollection.get(allFiles)));
 
@@ -82,11 +82,11 @@ public class FileManager {
         Logger.debug(String.format("Filtered files: %s", PrettyCollection.get(filteredFiles)));
 
         return filteredFiles.stream()
-                            .filter(path -> Files.exists(ServerSync.rootDir.resolve(path)))
+                            .filter(path -> Files.exists(ServerSyncWrapper.rootDir.resolve(path)))
                             .collect(
                                 Collectors.toConcurrentMap(
                                     Path::toString,
-                                    path -> FileHash.hashFile(ServerSync.rootDir.resolve(path))
+                                    path -> FileHash.hashFile(ServerSyncWrapper.rootDir.resolve(path))
                                 ));
     }
 

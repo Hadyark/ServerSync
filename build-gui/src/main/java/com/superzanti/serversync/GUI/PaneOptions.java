@@ -1,7 +1,8 @@
 package com.superzanti.serversync.GUI;
 
-import com.superzanti.serversync.GUIJavaFX.I18N;
+
 import com.superzanti.serversync.ServerSync;
+import com.superzanti.serversync.ServerSyncWrapper;
 import com.superzanti.serversync.config.SyncConfig;
 import com.superzanti.serversync.util.Logger;
 import com.superzanti.serversync.util.Zipper;
@@ -188,12 +189,12 @@ public class PaneOptions extends GridPane {
         if (comboBoxLanguage == null) {
             comboBoxLanguage = new ComboBox();
             comboBoxLanguage.getItems().addAll(
-                    ServerSync.strings.getString("language/english"),
-                    ServerSync.strings.getString("language/spanish"),
-                    ServerSync.strings.getString("language/french"),
-                    ServerSync.strings.getString("language/polish"),
-                    ServerSync.strings.getString("language/russian"),
-                    ServerSync.strings.getString("language/chinese"));
+                    ServerSyncWrapper.strings.getString("language/english"),
+                    ServerSyncWrapper.strings.getString("language/spanish"),
+                    ServerSyncWrapper.strings.getString("language/french"),
+                    ServerSyncWrapper.strings.getString("language/polish"),
+                    ServerSyncWrapper.strings.getString("language/russian"),
+                    ServerSyncWrapper.strings.getString("language/chinese"));
             setDefaultComboxBox();
             comboBoxLanguage.valueProperty().addListener((obs, oldItem, newItem) -> {
                 changeLanguage(newItem);
@@ -225,17 +226,17 @@ public class PaneOptions extends GridPane {
     }
 
     private void changeLanguage(String language) {
-        if (language.equals(ServerSync.strings.getString("language/english"))) {
+        if (language.equals(ServerSyncWrapper.strings.getString("language/english"))) {
             I18N.setLocale(new Locale("en", "US"));
-        } else if (language.equals(ServerSync.strings.getString("language/spanish"))) {
+        } else if (language.equals(ServerSyncWrapper.strings.getString("language/spanish"))) {
             I18N.setLocale(new Locale("es", "ES"));
-        } else if (language.equals(ServerSync.strings.getString("language/french"))) {
+        } else if (language.equals(ServerSyncWrapper.strings.getString("language/french"))) {
             I18N.setLocale(new Locale("fr", "FR"));
-        } else if (language.equals(ServerSync.strings.getString("language/polish"))) {
+        } else if (language.equals(ServerSyncWrapper.strings.getString("language/polish"))) {
             I18N.setLocale(new Locale("pl", "PL"));
-        } else if (language.equals(ServerSync.strings.getString("language/russian"))) {
+        } else if (language.equals(ServerSyncWrapper.strings.getString("language/russian"))) {
             I18N.setLocale(new Locale("ru", "RU"));
-        } else if (language.equals(ServerSync.strings.getString("language/chinese"))) {
+        } else if (language.equals(ServerSyncWrapper.strings.getString("language/chinese"))) {
             I18N.setLocale(new Locale("zh", "CN"));
         }
     }
@@ -243,17 +244,17 @@ public class PaneOptions extends GridPane {
     private void setDefaultComboxBox(){
         Locale locale = SyncConfig.getConfig().LOCALE;
         if (locale.equals(new Locale("en", "US")) || locale.equals(new Locale("en"))) {
-            comboBoxLanguage.getSelectionModel().select(ServerSync.strings.getString("language/english"));
+            comboBoxLanguage.getSelectionModel().select(ServerSyncWrapper.strings.getString("language/english"));
         } else if (locale.equals(new Locale("es", "ES")) || locale.equals(new Locale("es"))) {
-            comboBoxLanguage.getSelectionModel().select(ServerSync.strings.getString("language/spanish"));
+            comboBoxLanguage.getSelectionModel().select(ServerSyncWrapper.strings.getString("language/spanish"));
         } else if (locale.equals(new Locale("fr", "FR")) || locale.equals(new Locale("fr"))) {
-            comboBoxLanguage.getSelectionModel().select(ServerSync.strings.getString("language/french"));
+            comboBoxLanguage.getSelectionModel().select(ServerSyncWrapper.strings.getString("language/french"));
         } else if (locale.equals(new Locale("pl", "PL")) || locale.equals(new Locale("pl"))) {
-            comboBoxLanguage.getSelectionModel().select(ServerSync.strings.getString("language/polish"));
+            comboBoxLanguage.getSelectionModel().select(ServerSyncWrapper.strings.getString("language/polish"));
         } else if (locale.equals(new Locale("ru", "RU")) || locale.equals(new Locale("ru"))) {
-            comboBoxLanguage.getSelectionModel().select(ServerSync.strings.getString("language/russian"));
+            comboBoxLanguage.getSelectionModel().select(ServerSyncWrapper.strings.getString("language/russian"));
         } else if (locale.equals(new Locale("zh", "CN")) || locale.equals(new Locale("zh"))) {
-            comboBoxLanguage.getSelectionModel().select(ServerSync.strings.getString("language/chinese"));
+            comboBoxLanguage.getSelectionModel().select(ServerSyncWrapper.strings.getString("language/chinese"));
         }
     }
 }

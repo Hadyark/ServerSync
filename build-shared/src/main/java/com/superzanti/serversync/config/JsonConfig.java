@@ -36,6 +36,7 @@ public class JsonConfig {
     private static final String PROP_THEME = "theme";
 
     public static void forServer(Path json) throws IOException {
+        Logger.debug(json.toString());
         try (Reader reader = Files.newBufferedReader(json)) {
             boolean hasMissingEntries = false;
             SyncConfig config = SyncConfig.getConfig();

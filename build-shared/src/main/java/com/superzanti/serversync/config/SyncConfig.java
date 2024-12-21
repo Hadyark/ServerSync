@@ -1,6 +1,6 @@
 package com.superzanti.serversync.config;
 
-import com.superzanti.serversync.ServerSync;
+import com.superzanti.serversync.ServerSyncWrapper;
 import com.superzanti.serversync.files.DirectoryEntry;
 import com.superzanti.serversync.files.EDirectoryMode;
 import com.superzanti.serversync.files.FileRedirect;
@@ -57,10 +57,10 @@ public class SyncConfig {
 
     public static SyncConfig getConfig() {
         if (SyncConfig.singleton == null) {
-            if (ServerSync.MODE == EServerMode.SERVER) {
+            if (ServerSyncWrapper.MODE == EServerMode.SERVER) {
                 SyncConfig.singleton = new SyncConfig(EConfigType.SERVER);
             }
-            if (ServerSync.MODE == EServerMode.CLIENT) {
+            if (ServerSyncWrapper.MODE == EServerMode.CLIENT) {
                 SyncConfig.singleton = new SyncConfig(EConfigType.CLIENT);
             }
         }
@@ -68,6 +68,9 @@ public class SyncConfig {
     }
 
     public void save() throws IOException {
-        ConfigLoader.save(configType);
+        switch (configType){
+            case CLIENT -> ConfigLoader.saveClient();
+            case SERVER -> ConfigLoader.saveServer();
+        }
     }
 }

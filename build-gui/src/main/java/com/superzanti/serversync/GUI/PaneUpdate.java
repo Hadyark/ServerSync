@@ -2,7 +2,6 @@ package com.superzanti.serversync.GUI;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
-import com.superzanti.serversync.GUIJavaFX.I18N;
 import com.superzanti.serversync.RefStrings;
 import com.superzanti.serversync.util.Logger;
 import javafx.application.Platform;

@@ -1,6 +1,6 @@
 package com.superzanti.serversync;
 
-import com.superzanti.serversync.GUIJavaFX.GUI_Launcher;
+import com.superzanti.serversync.GUI.GUI_Launcher;
 import com.superzanti.serversync.client.ClientWorker;
 import com.superzanti.serversync.config.ConfigLoader;
 import com.superzanti.serversync.config.SyncConfig;
@@ -15,7 +15,6 @@ import picocli.CommandLine.Option;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Locale;
@@ -28,14 +27,6 @@ import java.util.stream.Collectors;
 public class ServerSync implements Callable<Integer> {
 
     /* AWT EVENT DISPATCHER THREAD */
-
-    public static final String APPLICATION_TITLE = "Serversync";
-    public static final String GET_SERVER_INFO = "SERVER_INFO";
-    public static EServerMode MODE;
-
-    public static ResourceBundle strings;
-
-    public static Path rootDir = Paths.get(System.getProperty("user.dir"));
 
     @SuppressWarnings("FieldMayBeFinal") // These have special behavior, final breaks it
     @Option(names = {"-r", "--root"}, description = "The root directory of the game, defaults to the current working directory.")
@@ -68,7 +59,7 @@ public class ServerSync implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        ServerSync.rootDir = Paths.get(rootDirectory);
+        ServerSyncWrapper.rootDir = Paths.get(rootDirectory);
         if (modeServer) {
             runInServerMode();
         } else {
@@ -78,7 +69,7 @@ public class ServerSync implements Callable<Integer> {
     }
 
     private void commonInit() {
-        Logger.log(String.format("Root dir: %s", ServerSync.rootDir.toAbsolutePath()));
+        Logger.log(String.format("Root dir: %s", ServerSyncWrapper.rootDir.toAbsolutePath()));
         Logger.log(String.format("Running version: %s", RefStrings.VERSION));
         Locale locale = SyncConfig.getConfig().LOCALE;
         if (languageCode != null) {
@@ -98,17 +89,17 @@ public class ServerSync implements Callable<Integer> {
 
         try {
             Logger.log("Loading language file: " + locale);
-            strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", locale);
+            ServerSyncWrapper.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", locale);
         } catch (MissingResourceException e) {
             Logger.log("No language file available for: " + locale + ", defaulting to en_US");
-            strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", new Locale("en", "US"));
+            ServerSyncWrapper.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", new Locale("en", "US"));
         }
     }
 
     private Thread runInServerMode() {
-        ServerSync.MODE = EServerMode.SERVER;
+        ServerSyncWrapper.MODE = EServerMode.SERVER;
         try {
-            ConfigLoader.load(EConfigType.SERVER);
+            ConfigLoader.loadServer();
         } catch (IOException e) {
             Logger.error("Failed to load server config");
             Logger.debug(e);
@@ -121,14 +112,14 @@ public class ServerSync implements Callable<Integer> {
     }
 
     private void runInClientMode() {
-        ServerSync.MODE = EServerMode.CLIENT;
+        ServerSyncWrapper.MODE = EServerMode.CLIENT;
         if(modeQuiet||modeProgressOnly){
             //Disable the consoleHandler to fix automation hanging
             Logger.setSystemOutput(false);
         }
         SyncConfig config = SyncConfig.getConfig();
         try {
-            ConfigLoader.load(EConfigType.CLIENT);
+            ConfigLoader.loadClient();
         } catch (IOException e) {
             Logger.error("Failed to load client config");
             e.printStackTrace();
