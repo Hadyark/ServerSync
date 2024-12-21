@@ -1,6 +1,6 @@
 package com.superzanti.serversync.GUI;
 
-import com.superzanti.serversync.ServerSyncWrapper;
+import com.superzanti.serversync.ServerSyncUtility;
 import com.superzanti.serversync.client.ActionEntry;
 import com.superzanti.serversync.client.ClientWorker;
 import com.superzanti.serversync.client.EActionType;
@@ -194,18 +194,18 @@ public class PaneSync extends BorderPane {
         if (ip.equals("") && port == -1) {
             updateLogsArea("No config found, requesting details");
             displayAlert(
-                    ServerSyncWrapper.strings.getString("ui/wrong_configuration"),
-                    ServerSyncWrapper.strings.getString("ui/ip_empty") + "\n" + ServerSyncWrapper.strings.getString("ui/port_invalid")
+                    ServerSyncUtility.strings.getString("ui/wrong_configuration"),
+                    ServerSyncUtility.strings.getString("ui/ip_empty") + "\n" + ServerSyncUtility.strings.getString("ui/port_invalid")
             );
             return false;
         } else if (ip.equals("")) {
             updateLogsArea("The ip field is empty");
-            displayAlert(ServerSyncWrapper.strings.getString("ui/wrong_ip"), ServerSyncWrapper.strings.getString("ui/ip_empty"));
+            displayAlert(ServerSyncUtility.strings.getString("ui/wrong_ip"), ServerSyncUtility.strings.getString("ui/ip_empty"));
             return false;
         } else if (port == -1) {
             updateLogsArea("The ip field is empty");
             displayAlert(
-                ServerSyncWrapper.strings.getString("ui/wrong_port"), ServerSyncWrapper.strings.getString("ui/port_invalid"));
+                    ServerSyncUtility.strings.getString("ui/wrong_port"), ServerSyncUtility.strings.getString("ui/port_invalid"));
             return false;
         }
         return true;
@@ -240,7 +240,7 @@ public class PaneSync extends BorderPane {
 
                     try {
                         Platform.runLater(() -> {
-                            pathText.set(ServerSyncWrapper.strings.getString("ui/message_connecting_to_server"));
+                            pathText.set(ServerSyncUtility.strings.getString("ui/message_connecting_to_server"));
                         });
                         worker.setAddress(ip);
                         worker.setPort(port);
@@ -257,7 +257,7 @@ public class PaneSync extends BorderPane {
                                 try {
                                     Platform.runLater(() -> {
                                         pathText.set(
-                                            ServerSyncWrapper.strings.getString("ui/message_connected_checking_for_updates"));
+                                                ServerSyncUtility.strings.getString("ui/message_connected_checking_for_updates"));
                                     });
                                     List<ActionEntry> actions = worker.fetchActions().call();
                                     list.clear();
@@ -265,7 +265,7 @@ public class PaneSync extends BorderPane {
 
                                     if (actions.size() > 0) {
                                         Platform.runLater(() -> {
-                                            pathText.set(ServerSyncWrapper.strings.getString("ui/message_updating_files"));
+                                            pathText.set(ServerSyncUtility.strings.getString("ui/message_updating_files"));
                                         });
                                     }
                                     worker.executeActions(actions, update -> {
@@ -308,9 +308,9 @@ public class PaneSync extends BorderPane {
                                 Platform.runLater(() -> {
                                     clearProgress();
                                     if (didSomething.get()) {
-                                        setProgressText(ServerSyncWrapper.strings.getString("update_complete"));
+                                        setProgressText(ServerSyncUtility.strings.getString("update_complete"));
                                     } else {
-                                        setProgressText(ServerSyncWrapper.strings.getString("ui/message_nothing_to_do"));
+                                        setProgressText(ServerSyncUtility.strings.getString("ui/message_nothing_to_do"));
                                     }
                                 });
                                 super.succeeded();
@@ -322,7 +322,7 @@ public class PaneSync extends BorderPane {
                                 clearProgressBinding();
                                 Platform.runLater(() -> {
                                     clearProgress();
-                                    setProgressText(ServerSyncWrapper.strings.getString("update_error"));
+                                    setProgressText(ServerSyncUtility.strings.getString("update_error"));
                                 });
                                 super.failed();
                             }
@@ -336,9 +336,9 @@ public class PaneSync extends BorderPane {
                             clearProgress();
                             setProgressText(
                                 String.format(
-                                    ServerSyncWrapper.strings.getString("ui/message_failed_to_connect_to_server"),
-                                    ip,
-                                    port
+                                        ServerSyncUtility.strings.getString("ui/message_failed_to_connect_to_server"),
+                                        ip,
+                                        port
                                 )
                             );
                         });
@@ -374,7 +374,7 @@ public class PaneSync extends BorderPane {
                 .getObservableMods();
             Logger.log("Starting update process...");
             Platform.runLater(() -> {
-                setProgressText(ServerSyncWrapper.strings.getString("ui/message_connecting_to_server"));
+                setProgressText(ServerSyncUtility.strings.getString("ui/message_connecting_to_server"));
                 list.clear();
             });
             worker.setAddress(ip);
@@ -389,7 +389,7 @@ public class PaneSync extends BorderPane {
                 saveConfig();
 
                 Platform.runLater(() -> {
-                    setProgressText(ServerSyncWrapper.strings.getString("ui/message_connected_checking_for_updates"));
+                    setProgressText(ServerSyncUtility.strings.getString("ui/message_connected_checking_for_updates"));
                 });
                 Then.onComplete(worker.fetchActions(), actions -> {
                     Platform.runLater(() -> {
@@ -403,9 +403,9 @@ public class PaneSync extends BorderPane {
                 Platform.runLater(() -> {
                     setProgressText(
                         String.format(
-                            ServerSyncWrapper.strings.getString("ui/message_failed_to_connect_to_server"),
-                            ip,
-                            port
+                                ServerSyncUtility.strings.getString("ui/message_failed_to_connect_to_server"),
+                                ip,
+                                port
                         )
                     );
                 });

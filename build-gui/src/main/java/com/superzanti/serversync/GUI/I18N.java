@@ -1,7 +1,6 @@
 package com.superzanti.serversync.GUI;
 
-import com.superzanti.serversync.ServerSync;
-import com.superzanti.serversync.ServerSyncWrapper;
+import com.superzanti.serversync.ServerSyncUtility;
 import com.superzanti.serversync.client.ActionEntry;
 import com.superzanti.serversync.client.EActionType;
 import com.superzanti.serversync.config.SyncConfig;
@@ -68,7 +67,7 @@ public final class I18N {
 
     public static void setLocale(Locale locale) {
         SyncConfig.getConfig().LOCALE = locale;
-        ServerSyncWrapper.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", locale);
+        ServerSyncUtility.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", locale);
         localeProperty().set(locale);
         Locale.setDefault(locale);
     }

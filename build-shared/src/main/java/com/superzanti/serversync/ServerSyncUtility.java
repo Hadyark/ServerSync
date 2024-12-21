@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
-public class ServerSyncWrapper{
+public class ServerSyncUtility {
 
     /* AWT EVENT DISPATCHER THREAD */
 

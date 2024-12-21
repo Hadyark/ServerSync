@@ -1,7 +1,6 @@
 package com.superzanti.serversync.config;
 
-import com.superzanti.serversync.ServerSyncWrapper;
-import com.superzanti.serversync.util.enums.EConfigType;
+import com.superzanti.serversync.ServerSyncUtility;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,13 +9,13 @@ import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
 public class ConfigLoader {
-    private static final Path v2ServerConfig = Paths.get(ServerSyncWrapper.rootDir.toString(), "serversync-server.json");
-    private static final Path v2ClientConfig = Paths.get(ServerSyncWrapper.rootDir.toString(), "serversync-client.json");
+    private static final Path v2ServerConfig = Paths.get(ServerSyncUtility.rootDir.toString(), "serversync-server.json");
+    private static final Path v2ClientConfig = Paths.get(ServerSyncUtility.rootDir.toString(), "serversync-client.json");
 
     private static final Path v1ServerConfig = Paths
-            .get(ServerSyncWrapper.rootDir.toString(), "config", "serversync", "serversync-server.cfg");
+            .get(ServerSyncUtility.rootDir.toString(), "config", "serversync", "serversync-server.cfg");
     private static final Path v1ClientConfig = Paths
-            .get(ServerSyncWrapper.rootDir.toString(), "config", "serversync", "serversync-client.cfg");
+            .get(ServerSyncUtility.rootDir.toString(), "config", "serversync", "serversync-client.cfg");
 
     public static void loadServer() throws IOException {
         if (Files.exists(v2ServerConfig)) {

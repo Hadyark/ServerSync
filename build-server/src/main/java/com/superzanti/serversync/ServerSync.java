@@ -55,14 +55,14 @@ public class ServerSync implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        ServerSyncWrapper.rootDir = Paths.get(rootDirectory);
+        ServerSyncUtility.rootDir = Paths.get(rootDirectory);
         runInServerMode();
 
         return 0;
     }
 
     private void commonInit() {
-        Logger.log(String.format("Root dir: %s", ServerSyncWrapper.rootDir.toAbsolutePath()));
+        Logger.log(String.format("Root dir: %s", ServerSyncUtility.rootDir.toAbsolutePath()));
         Logger.log(String.format("Running version: %s", RefStrings.VERSION));
         Locale locale = SyncConfig.getConfig().LOCALE;
         if (languageCode != null) {
@@ -82,15 +82,15 @@ public class ServerSync implements Callable<Integer> {
 
         try {
             Logger.log("Loading language file: " + locale);
-            ServerSyncWrapper.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", locale);
+            ServerSyncUtility.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", locale);
         } catch (MissingResourceException e) {
             Logger.log("No language file available for: " + locale + ", defaulting to en_US");
-            ServerSyncWrapper.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", new Locale("en", "US"));
+            ServerSyncUtility.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", new Locale("en", "US"));
         }
     }
 
     private Thread runInServerMode() {
-        ServerSyncWrapper.MODE = EServerMode.SERVER;
+        ServerSyncUtility.MODE = EServerMode.SERVER;
         try {
             ConfigLoader.loadServer();
         } catch (IOException e) {

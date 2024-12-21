@@ -1,6 +1,6 @@
 package com.superzanti.serversync.util;
 
-import com.superzanti.serversync.ServerSyncWrapper;
+import com.superzanti.serversync.ServerSyncUtility;
 
 import java.util.Arrays;
 import java.util.concurrent.Executors;
@@ -25,7 +25,7 @@ public class Logger {
     private static ScheduledFuture<?> waitingFlush;
 
     public static String getContext() {
-        return ServerSyncWrapper.MODE == null ? "undefined" : ServerSyncWrapper.MODE.toString();
+        return ServerSyncUtility.MODE == null ? "undefined" : ServerSyncUtility.MODE.toString();
     }
 
     public static LoggerInstance getInstance() {

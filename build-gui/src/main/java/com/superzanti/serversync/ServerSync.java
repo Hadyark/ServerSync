@@ -4,10 +4,8 @@ import com.superzanti.serversync.GUI.GUI_Launcher;
 import com.superzanti.serversync.client.ClientWorker;
 import com.superzanti.serversync.config.ConfigLoader;
 import com.superzanti.serversync.config.SyncConfig;
-import com.superzanti.serversync.server.ServerSetup;
 import com.superzanti.serversync.util.Logger;
 import com.superzanti.serversync.util.Then;
-import com.superzanti.serversync.util.enums.EConfigType;
 import com.superzanti.serversync.util.enums.EServerMode;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -59,13 +57,13 @@ public class ServerSync implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        ServerSyncWrapper.rootDir = Paths.get(rootDirectory);
+        ServerSyncUtility.rootDir = Paths.get(rootDirectory);
         runInClientMode();
         return 0;
     }
 
     private void commonInit() {
-        Logger.log(String.format("Root dir: %s", ServerSyncWrapper.rootDir.toAbsolutePath()));
+        Logger.log(String.format("Root dir: %s", ServerSyncUtility.rootDir.toAbsolutePath()));
         Logger.log(String.format("Running version: %s", RefStrings.VERSION));
         Locale locale = SyncConfig.getConfig().LOCALE;
         if (languageCode != null) {
@@ -85,15 +83,15 @@ public class ServerSync implements Callable<Integer> {
 
         try {
             Logger.log("Loading language file: " + locale);
-            ServerSyncWrapper.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", locale);
+            ServerSyncUtility.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", locale);
         } catch (MissingResourceException e) {
             Logger.log("No language file available for: " + locale + ", defaulting to en_US");
-            ServerSyncWrapper.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", new Locale("en", "US"));
+            ServerSyncUtility.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", new Locale("en", "US"));
         }
     }
 
     private void runInClientMode() {
-        ServerSyncWrapper.MODE = EServerMode.CLIENT;
+        ServerSyncUtility.MODE = EServerMode.CLIENT;
         if(modeQuiet||modeProgressOnly){
             //Disable the consoleHandler to fix automation hanging
             Logger.setSystemOutput(false);

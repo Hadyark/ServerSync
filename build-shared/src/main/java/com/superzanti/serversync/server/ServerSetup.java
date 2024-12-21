@@ -1,6 +1,6 @@
 package com.superzanti.serversync.server;
 
-import com.superzanti.serversync.ServerSyncWrapper;
+import com.superzanti.serversync.ServerSyncUtility;
 import com.superzanti.serversync.config.SyncConfig;
 import com.superzanti.serversync.files.*;
 import com.superzanti.serversync.util.BannedIPSReader;
@@ -51,7 +51,7 @@ public class ServerSetup extends Thread {
 
             Logger.log(String.format("Manifest files: %s", PrettyCollection.get(manifest.files)));
 
-            manifest.directories.stream().map(d -> ServerSyncWrapper.rootDir.resolve(Paths.get(d.path))).forEach(p -> {
+            manifest.directories.stream().map(d -> ServerSyncUtility.rootDir.resolve(Paths.get(d.path))).forEach(p -> {
                 if (Files.notExists(p)) {
                     Logger.error(String.format("Managed directory does not exist: %s", p));
                     System.exit(1);
@@ -75,7 +75,7 @@ public class ServerSetup extends Thread {
             config.REDIRECT_FILES_LIST.add(new FileRedirect("clientmods/**", "mods"));
         }
 
-        Files.walkFileTree(ServerSyncWrapper.rootDir, new FileVisitor<>() {
+        Files.walkFileTree(ServerSyncUtility.rootDir, new FileVisitor<>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                 if (Files.isReadable(dir)) {
@@ -89,7 +89,7 @@ public class ServerSetup extends Thread {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                 if (Files.isReadable(file)) {
-                    Path rel = ServerSyncWrapper.rootDir.relativize(file);
+                    Path rel = ServerSyncUtility.rootDir.relativize(file);
                     if (Glob.matches(rel, config.FILE_INCLUDE_LIST) && !Glob.matches(rel, config.FILE_IGNORE_LIST)) {
                         String hash = FileHash.hashFile(file);
                         FileEntry entry = config.REDIRECT_FILES_LIST

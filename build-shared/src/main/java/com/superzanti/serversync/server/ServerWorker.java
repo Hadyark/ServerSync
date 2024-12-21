@@ -1,6 +1,6 @@
 package com.superzanti.serversync.server;
 
-import com.superzanti.serversync.ServerSyncWrapper;
+import com.superzanti.serversync.ServerSyncUtility;
 import com.superzanti.serversync.config.SyncConfig;
 import com.superzanti.serversync.files.FileManifest;
 import com.superzanti.serversync.files.FileEntry;
@@ -110,7 +110,7 @@ public class ServerWorker implements Runnable {
             try {
                 // <---->
                 // always called first
-                if (message.equals(ServerSyncWrapper.GET_SERVER_INFO)) {
+                if (message.equals(ServerSyncUtility.GET_SERVER_INFO)) {
                     clientLogger.log("Sending server information");
                     oos.writeObject(new ServerInfo(messages, SyncConfig.getConfig().SYNC_MODE));
                     oos.flush();
@@ -182,7 +182,7 @@ public class ServerWorker implements Runnable {
                         for (FileEntry entry : manifest.files) {
                             try {
                                 Path relative = Paths.get(entry.path);
-                                Path serverPath = ServerSyncWrapper.rootDir.resolve(relative);
+                                Path serverPath = ServerSyncUtility.rootDir.resolve(relative);
 
                                 clientLogger.debug(String.format("Asking client if the have file: %s", entry.path));
                                 oos.writeBoolean(true); // There are files left
@@ -278,13 +278,13 @@ public class ServerWorker implements Runnable {
             size = Files.size(file);
         } catch (IOException e) {
             clientLogger.debug(e);
-            String error = String.format(ServerSyncWrapper.strings.getString("server_message_file_missing"), file);
+            String error = String.format(ServerSyncUtility.strings.getString("server_message_file_missing"), file);
             clientLogger.error(error);
             Logger.error(error);
         } catch (SecurityException se) {
             clientLogger.debug(se);
             clientLogger
-                .error(String.format(ServerSyncWrapper.strings.getString("server_message_file_permission_denied"), file));
+                .error(String.format(ServerSyncUtility.strings.getString("server_message_file_permission_denied"), file));
         }
         clientLogger.debug(String.format("File size is: %d", size));
         oos.writeLong(size);

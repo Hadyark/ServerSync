@@ -1,7 +1,7 @@
 package com.superzanti.serversync.communication;
 
 import com.superzanti.serversync.RefStrings;
-import com.superzanti.serversync.ServerSyncWrapper;
+import com.superzanti.serversync.ServerSyncUtility;
 import com.superzanti.serversync.client.Server;
 import com.superzanti.serversync.config.SyncConfig;
 import com.superzanti.serversync.util.Logger;
@@ -93,7 +93,7 @@ public class SyncFileOutputStream {
             String.format(
                     "%s %s %s",
                     RefStrings.UPDATE_TOKEN,
-                    ServerSyncWrapper.strings.getString("update_success"),
+                    ServerSyncUtility.strings.getString("update_success"),
                     outputFile.toString()
             ));
         return true;

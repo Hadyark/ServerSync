@@ -1,6 +1,6 @@
 package com.superzanti.serversync.client;
 
-import com.superzanti.serversync.ServerSyncWrapper;
+import com.superzanti.serversync.ServerSyncUtility;
 import com.superzanti.serversync.communication.response.ServerInfo;
 import com.superzanti.serversync.util.AutoClose;
 import com.superzanti.serversync.util.Logger;
@@ -38,40 +38,40 @@ public class Server {
         try {
             host = InetAddress.getByName(address);
         } catch (UnknownHostException e) {
-            Logger.error(ServerSyncWrapper.strings.getString("connection_failed_host") + ": " + address);
+            Logger.error(ServerSyncUtility.strings.getString("connection_failed_host") + ": " + address);
             return false;
         }
 
-        Logger.debug(ServerSyncWrapper.strings.getString("connection_attempt_server"));
+        Logger.debug(ServerSyncUtility.strings.getString("connection_attempt_server"));
         clientSocket = new Socket();
 
-        Logger.log("< " + ServerSyncWrapper.strings.getString("connection_message") + " >");
+        Logger.log("< " + ServerSyncUtility.strings.getString("connection_message") + " >");
         try {
             clientSocket.setPerformancePreferences(0, 1, 2);
             clientSocket.connect(new InetSocketAddress(host.getHostName(), port), 5000);
         } catch (IOException e) {
-            Logger.error(ServerSyncWrapper.strings.getString("connection_failed_server") + ": " + address + ":" + port);
+            Logger.error(ServerSyncUtility.strings.getString("connection_failed_server") + ": " + address + ":" + port);
             AutoClose.closeResource(clientSocket);
             return false;
         }
 
-        Logger.debug(ServerSyncWrapper.strings.getString("debug_IO_streams"));
+        Logger.debug(ServerSyncUtility.strings.getString("debug_IO_streams"));
         try {
             os = clientSocket.getOutputStream();
             is = clientSocket.getInputStream();
             output = new ObjectOutputStream(os);
             input = new ObjectInputStream(is);
         } catch (IOException e) {
-            Logger.debug(ServerSyncWrapper.strings.getString("debug_IO_streams_failed"));
+            Logger.debug(ServerSyncUtility.strings.getString("debug_IO_streams_failed"));
             AutoClose.closeResource(clientSocket);
             return false;
         }
 
         try {
-            output.writeUTF(ServerSyncWrapper.GET_SERVER_INFO);
+            output.writeUTF(ServerSyncUtility.GET_SERVER_INFO);
             output.flush();
         } catch (IOException e) {
-            Logger.outputError(ServerSyncWrapper.GET_SERVER_INFO);
+            Logger.outputError(ServerSyncUtility.GET_SERVER_INFO);
         }
 
         try {
