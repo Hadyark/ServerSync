@@ -60,11 +60,7 @@ public class ServerSync implements Callable<Integer> {
     @Override
     public Integer call() {
         ServerSyncWrapper.rootDir = Paths.get(rootDirectory);
-        if (modeServer) {
-            runInServerMode();
-        } else {
-            runInClientMode();
-        }
+        runInClientMode();
         return 0;
     }
 
@@ -94,21 +90,6 @@ public class ServerSync implements Callable<Integer> {
             Logger.log("No language file available for: " + locale + ", defaulting to en_US");
             ServerSyncWrapper.strings = ResourceBundle.getBundle("assets.serversync.lang.MessagesBundle", new Locale("en", "US"));
         }
-    }
-
-    private Thread runInServerMode() {
-        ServerSyncWrapper.MODE = EServerMode.SERVER;
-        try {
-            ConfigLoader.loadServer();
-        } catch (IOException e) {
-            Logger.error("Failed to load server config");
-            Logger.debug(e);
-        }
-        commonInit();
-
-        Thread serverThread = new ServerSetup();
-        serverThread.start();
-        return serverThread;
     }
 
     private void runInClientMode() {
