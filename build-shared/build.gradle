@@ -16,7 +16,6 @@ version = ss_version
 dependencies {
 
     implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
-    annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
     implementation fileTree(dir: 'libs', include: '*.jar')
 
     // Use JUnit Jupiter API for testing.
@@ -25,3 +24,4 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2', 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
 
 }
+
