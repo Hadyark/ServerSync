@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation project(':build-shared')  // This makes shared classes available to gui
+    implementation project(':build-shared')  // This makes shared classes available
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
