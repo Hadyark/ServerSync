@@ -3,9 +3,7 @@ import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
 plugins {
     id 'edu.sc.seis.launch4j' version '2.5.4'
     id 'java'
-    id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
+
 }
 
 repositories {
@@ -15,38 +13,11 @@ repositories {
 group = "com.superzanti.serversync"
 version = ss_version
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-javafx {
-    version = "17.0.13"
-    modules = [ 'javafx.controls' ]
-}
-
-configurations {
-    serverShadowJar
-}
-
 dependencies {
 
-    //serverShadowJar
-    serverShadowJar 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
-    serverShadowJar 'info.picocli:picocli:4.7.5'
-    serverShadowJar fileTree(dir: 'libs', include: '*.jar')
-
-    //Dependencies (Server + GUI)
     implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
-    implementation 'info.picocli:picocli:4.7.5'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
     implementation fileTree(dir: 'libs', include: '*.jar')
-
-    //Dependencies (GUI)
-    implementation "org.openjfx:javafx-controls:$javafx.version:win"
-    implementation "org.openjfx:javafx-controls:$javafx.version:linux"
-    implementation "org.openjfx:javafx-controls:$javafx.version:mac"
 
     // Use JUnit Jupiter API for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2', 'org.junit.jupiter:junit-jupiter-params:5.8.2'
@@ -54,120 +25,3 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2', 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
 
 }
-
-jar {
-    processResources {
-        exclude "css/application.css"
-    }
-
-    manifest {
-        attributes 'Main-Class': ss_main_class, 'Implementation-Version': ss_version
-    }
-}
-
-// Configure the shadowJar task (with JavaFX)
-shadowJar {
-    inputs.file(jar.archiveFile)
-    archiveClassifier.set('gui')
-
-    //Don't minimize with JavaFX
-    //minimize() //Comment to build GUI
-
-    dependencies {
-        exclude 'forge*.jar'
-        //exclude '**/*javafx*/**' //Comment to build GUI
-
-    }
-}
-
-// Server JAR (without JavaFX)
-task serverShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
-    archiveClassifier.set('server')
-    configurations = [project.configurations.serverShadowJar]
-
-    // Include all main source sets
-    from sourceSets.main.output
-    minimize()
-
-    manifest {
-        attributes 'Main-Class': ss_main_class_server
-        attributes 'Implementation-Version': ss_version
-        // Force to start in server mode
-        attributes 'JVM-Arguments': '-server'
-    }
-
-    dependencies {
-        exclude 'forge*.jar'
-        exclude '**/*javafx*/**'
-    }
-}
-
-application {
-    mainClass = ss_main_class
-}
-
-test {
-    useJUnitPlatform()
-    afterTest { desc, result ->
-        logger.quiet "Ran test ${desc.name} [${desc.className}] with result: ${result.resultType}"
-    }
-}
-
-createExe {
-    jarTask = shadowJar
-    mainClassName = ss_main_class
-    outfile = 'ServerSyncClient.exe'
-    icon = "${projectDir}/src/main/resources/ServersyncLogo.ico"
-    copyConfigurable = shadowJar.outputs.files
-    supportUrl = "https://github.com/superzanti/ServerSync"
-    productName = "ServerSync - Client"
-    fileDescription = "The client side for users."
-    version = ss_version
-}
-
-task createServerExe(type: Launch4jLibraryTask) {
-    jarTask = shadowJar
-    mainClassName = ss_main_class_server
-    outfile = 'ServerSyncServer.exe'
-    headerType = 'console'
-    icon = "${projectDir}/src/main/resources/ServersyncLogoServer.ico"
-    copyConfigurable = shadowJar.outputs.files
-    supportUrl = "https://github.com/superzanti/ServerSync"
-    productName = "ServerSync - Server"
-    fileDescription = "The server side for admins."
-    version = ss_version
-}
-
-/*
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/${System.getenv('GPR_REPO')}")
-            credentials {
-                username = project.findProperty("gpr.user") as String ?: System.getenv("GPR_USERNAME")
-                password = project.findProperty("gpr.key") as String ?: System.getenv("GPR_TOKEN")
-            }
-        }
-    }
-    publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
-        }
-    }
-}
-*/
-
-tasks.register('cleanProject') {
-    def cleanupFiles = ["publish", "config", "logs", "mods", "clientmods"]
-
-    for (name in cleanupFiles) {
-        def f = file("$rootDir/$name")
-        if (f.exists() && f.canWrite()) {
-            f.deleteDir()
-        }
-    }
-}
-
-
-build.dependsOn serverShadowJar
