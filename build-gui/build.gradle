@@ -10,7 +10,7 @@ group = 'com.superzanti.serversync'
 version = '4.3.0'
 
 application {
-    mainClass = 'com.superzanti.serversync.ServerSyncGui'
+    mainClass = 'com.superzanti.serversync.ServerSync'
 }
 
 repositories {
